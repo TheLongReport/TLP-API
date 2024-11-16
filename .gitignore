@@ -43,3 +43,32 @@ docker-compose.override.yml
 # Git
 *.lock
 *.orig
+
+# Ignore build outputs
+bin/
+obj/
+
+# Ignore user-specific files
+*.user
+*.rsuser
+*.suo
+
+# Ignore IDE-specific files
+.vscode/
+.idea/
+.DS_Store
+
+# Ignore log files
+*.log
+
+# Ignore configuration files that may contain secrets
+appsettings*.json
+
+# Ignore published files
+wwwroot/
+
+# Ignore packages folder (if any)
+packages/
+
+# Ignore the local debug launch settings
+Properties/launchSettings.json

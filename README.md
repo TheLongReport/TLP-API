@@ -11,5 +11,10 @@ The **TLP-API** repository serves as the core backend API for **The Long Plan** 
 - **Logging and Monitoring**: Comprehensive logging and monitoring tools for debugging and performance tracking.
 - **Scalable and Modular Architecture**: Designed to support future growth and easy feature addition.
 
+## Tech Stack
+
+- **REST** not GraphQL
+- **NoSQL** (using Azure CosmosDB)
+
 ---
 For setup and usage instructions, please refer to the [Installation Guide](#).
