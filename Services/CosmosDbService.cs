@@ -1,24 +1,28 @@
 using Microsoft.Azure.Cosmos;
+using System.Threading.Tasks;
 
-public class CosmosDbService
+using TLP_API.Models;
+
+namespace TLP_API.Services
 {
-    private readonly CosmosClient _client;
-    private readonly Container _container;
-
-    public CosmosDbService(string connectionString, string databaseName, string containerName)
+    public class CosmosDbService : ICosmosDbService
     {
-        _client = new CosmosClient(connectionString);
-        _container = _client.GetContainer(databaseName, containerName);
-    }
+        private CosmosClient _cosmosClient;
+        private Container _container;
 
-    public async Task AddItemAsync<T>(T item, string id)
-    {
-        await _container.CreateItemAsync(item, new PartitionKey(id));
-    }
+        public CosmosDbService(string accountEndpoint, string accountKey, string databaseName, string containerName)
+        {
+            _cosmosClient = new CosmosClient(accountEndpoint, accountKey);
+            _container = _cosmosClient.GetContainer(databaseName, containerName);
+        }
 
-    public async Task<T> GetItemAsync<T>(string id)
-    {
-        var response = await _container.ReadItemAsync<T>(id, new PartitionKey(id));
-        return response.Resource;
+        public async Task AddItemAsync<T>(T item)
+        {
+            // Get the partition key from the 'id' property of the item
+            var partitionKey = new PartitionKey(item.GetType().GetProperty("id")?.GetValue(item)?.ToString());
+
+            // Create item with correct partition key
+            await _container.CreateItemAsync(item, partitionKey);
+        }
     }
 }

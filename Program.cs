@@ -1,48 +1,46 @@
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.Extensions.Logging;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using TLP_API.Models;
+using TLP_API.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container
-builder.Services.AddControllers(); // Enables controller support
-builder.Services.AddEndpointsApiExplorer(); // Enables API endpoint exploration
-builder.Services.AddSwaggerGen(); // Enables Swagger for API documentation
+// Load Cosmos DB settings from configuration
+var config = builder.Configuration.GetSection("CosmosDb");
+var accountEndpoint = config["AccountEndpoint"];
+var accountKey = config["AccountKey"];
+var databaseName = config["DatabaseName"];
+var containerName = config["ContainerName"];
 
-// Optional: Configure authentication (if needed for future steps)
-builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-    .AddJwtBearer(options =>
-    {
-        options.Authority = "<Your-Issuer-URL>"; // Replace with your JWT provider
-        options.Audience = "<Your-Audience>";    // Replace with your API audience
-    });
+// Validate that all required configuration values are present
+if (string.IsNullOrWhiteSpace(accountEndpoint) ||
+    string.IsNullOrWhiteSpace(accountKey) ||
+    string.IsNullOrWhiteSpace(databaseName) ||
+    string.IsNullOrWhiteSpace(containerName))
+{
+    throw new InvalidOperationException("Cosmos DB configuration is incomplete. Please check 'appsettings.json' or environment variables.");
+}
 
-// Example: Add Azure Cosmos DB Service (commented if not yet implemented)
-// builder.Services.AddSingleton(new CosmosDbService(
-//     "<Your-CosmosDB-Connection-String>",
-//     "<Your-Database-Name>",
-//     "<Your-Container-Name>"
-// ));
+// Add CosmosDbService to DI container
+builder.Services.AddSingleton<ICosmosDbService>(_ =>
+    new CosmosDbService(accountEndpoint, accountKey, databaseName, containerName));
 
 var app = builder.Build();
 
-// Enable Swagger in development environment
-if (app.Environment.IsDevelopment())
+// Basic test endpoint
+app.MapGet("/", () => "Welcome to TLP-API!");
+
+// API endpoint to add an item
+app.MapPost("/addItem", async (MyItem myItem, ICosmosDbService cosmosDbService) =>
 {
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
+    if (myItem == null)
+    {
+        return Results.BadRequest("Invalid data.");
+    }
 
-// Middleware
-app.UseHttpsRedirection(); // Redirect HTTP to HTTPS
-app.UseAuthorization();    // Enables authorization middleware
+    await cosmosDbService.AddItemAsync(myItem);
+    return Results.Ok("Item added successfully.");
+});
 
-// Define routes
-app.MapGet("/", () => "Welcome to TLP-API!"); // Root URL response
-app.MapGet("/hello", () => "Hello, World!");  // Example route
-app.MapGet("/api/status", () => new { Status = "Running", Version = "1.0.0" }); // API status route
-
-// Map controllers for additional API functionality
-app.MapControllers();
-
-// Run the application
 app.Run();
