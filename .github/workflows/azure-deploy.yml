@@ -22,7 +22,7 @@ jobs:
 
     # Set up Azure CLI
     - name: Set up Azure CLI
-      uses: azure/azure-cli-action@v2.1.0  # Correct the Azure CLI action
+      uses: Azure/cli@v2.1.0  # Correct the Azure CLI action
 
     # Log in to Azure
     - name: Log in to Azure
