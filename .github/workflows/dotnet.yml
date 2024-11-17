@@ -48,7 +48,7 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: test-results
-        path: ./TLP-API.Tests/bin/Release/net9.0/test_results.trx
+        path: ./TLP-API.Tests/TestResults/test_results.trx  # Corrected path
 
     # Publish test results to GitHub Releases
     - name: Publish test results
