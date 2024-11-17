@@ -1,0 +1,46 @@
+name: .NET Core CI
+
+on:
+  push:
+    branches:
+      - main
+      - dev
+  pull_request:
+    branches:
+      - main
+      - dev
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    
+    steps:
+    # Checkout the code
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    # Set up .NET SDK
+    - name: Set up .NET SDK
+      uses: actions/setup-dotnet@v2
+      with:
+        dotnet-version: '9.0.x' # Specify the .NET version you are using
+
+    # Restore dependencies
+    - name: Restore dependencies
+      run: dotnet restore
+
+    # Build the solution
+    - name: Build
+      run: dotnet build --configuration Release --no-restore
+
+    # Run tests
+    - name: Run tests
+      run: dotnet test --configuration Release --no-build --logger "trx;LogFileName=test_results.trx"
+    
+    # Upload test results to GitHub Actions
+    - name: Upload test results
+      if: always()
+      uses: actions/upload-artifact@v2
+      with:
+        name: test-results
+        path: test_results.trx
