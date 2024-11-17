@@ -1,3 +1,5 @@
+.vs/
+
 # Logs
 logs
 *.log
@@ -75,3 +77,6 @@ Properties/launchSettings.json
 
 # Ignore the test results
 TestResults/
+
+
+

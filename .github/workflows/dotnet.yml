@@ -44,3 +44,10 @@ jobs:
       with:
         name: test-results
         path: test_results.trx
+
+    # Publish test results to GitHub
+    - name: Publish test results to GitHub
+      uses: mikeal/publish-to-github-action@v1
+      with:
+        name: "Test Results"
+        file: test_results.trx
