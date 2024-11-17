@@ -22,6 +22,8 @@ jobs:
           tenant-id: ${{ secrets.AZURE_TENANT_ID }}
           client-secret: ${{ secrets.AZURE_CLIENT_SECRET }}
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+          # Disable OIDC authentication
+          auth-type: "ServicePrincipal"
 
       # Step 3: Deploy to Azure Function App using a ZIP file
       - name: Deploy to Azure Function App
