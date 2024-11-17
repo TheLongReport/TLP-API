@@ -8,6 +8,9 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+     
+    permissions:
+     id-token: write  # Grant permission to write the id-token
 
     steps:
       # Step 1: Checkout code from the repository
