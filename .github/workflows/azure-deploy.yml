@@ -13,8 +13,7 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    permissions:
-      id-token: write  # Grant permission to request ID token
+
 
 
     steps:
