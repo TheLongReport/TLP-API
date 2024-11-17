@@ -20,13 +20,11 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v2
 
-    # Set up Azure CLI
+    # Set up Azure CLI (This step ensures the CLI is available)
     - name: Set up Azure CLI
-      uses: azure/cli@v2.1.0
-      with:
-        azcliversion: latest  # Or specify a specific version
+      uses: azure/cli@v2.1.0  # This action sets up Azure CLI without inlineScript
 
-    # Log in to Azure
+    # Log in to Azure (authentication using service principal)
     - name: Log in to Azure
       uses: azure/login@v1
       with:
@@ -48,15 +46,17 @@ jobs:
       run: |
         dotnet publish --configuration Release --output ./publish
 
-    # Run Azure CLI commands to deploy the app
+    # Deploy to Azure Function App or Web App (this part is using Azure CLI commands)
     - name: Deploy to Azure Function App
-      uses: azure/cli@v2.1.0
-      with:
-        azcliversion: latest
-        inlineScript: |
-          az --version
-          az account set --subscription ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-          az webapp deployment source config-zip --resource-group ${{ secrets.AZURE_RESOURCE_GROUP }} --name ${{ secrets.AZURE_WEBAPP_NAME }} --src ./publish.zip
+      run: |
+        # Log in to Azure
+        az account set --subscription ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+        
+        # Deploy using Azure CLI (Replace with your Azure Function App or Web App name and resource group)
+        az webapp deployment source config-zip \
+          --resource-group ${{ secrets.AZURE_RESOURCE_GROUP }} \
+          --name ${{ secrets.AZURE_WEBAPP_NAME }} \
+          --src ./publish.zip
 
     # Clean up if necessary
     - name: Cleanup
