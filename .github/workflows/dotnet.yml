@@ -39,6 +39,7 @@ jobs:
 
     # List files to verify test results
     - name: List files
+      if: always()
       run: ls -R ./TLP-API.Tests
 
     # Upload test results to GitHub Actions
