@@ -37,13 +37,17 @@ jobs:
     - name: Run tests
       run: dotnet test --configuration Release --no-build --logger "trx;LogFileName=test_results.trx"
 
+    # List the files to verify test results
+    - name: List files
+      run: ls -R
+      
     # Upload test results to GitHub Actions
     - name: Upload test results
       if: always()
       uses: actions/upload-artifact@v4
       with:
         name: test-results
-        path: test_results.trx
+        path: ./TLP-API.Tests/test_results.trx
 
     # Publish test results to GitHub Releases
     - name: Publish test results
