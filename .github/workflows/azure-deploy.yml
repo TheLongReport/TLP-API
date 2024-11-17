@@ -21,6 +21,9 @@ jobs:
     # Checkout the code
     - name: Checkout code
       uses: actions/checkout@v2
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+        fetch-depth: 1
 
     # Log in to Azure (authentication using service principal)
     - name: Log in to Azure
