@@ -72,3 +72,6 @@ packages/
 
 # Ignore the local debug launch settings
 Properties/launchSettings.json
+
+# Ignore the test results
+TestResults/

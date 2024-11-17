@@ -15,10 +15,13 @@ namespace TLP_API.Services
             _cosmosClient = new CosmosClient(accountEndpoint, accountKey);
             _container = _cosmosClient.GetContainer(databaseName, containerName);
         }
-
         public async Task AddItemAsync<T>(T item)
         {
-            // Get the partition key from the 'id' property of the item
+            if (item == null)
+            {
+                throw new ArgumentNullException(nameof(item), "Item cannot be null.");
+            }
+
             var partitionKey = new PartitionKey(item.GetType().GetProperty("id")?.GetValue(item)?.ToString());
 
             // Create item with correct partition key
