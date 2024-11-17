@@ -13,7 +13,9 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    environment: production  # Specify your environment name if you have specific ones
+    permissions:
+      id-token: write  # Grant permission to request ID token
+
 
     steps:
     # Checkout the code
@@ -27,12 +29,12 @@ jobs:
         client-id: ${{ secrets.AZURE_CLIENT_ID }}
         tenant-id: ${{ secrets.AZURE_TENANT_ID }}
         client-secret: ${{ secrets.AZURE_CLIENT_SECRET }}
-        subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}  # Add subscription ID here
+        subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+        auth-type: "SERVICE_PRINCIPAL"
         enable-AzPSSession: false
-        environment: azurecloud
-        auth-type: SERVICE_PRINCIPAL
+        environment: "azurecloud"
         allow-no-subscriptions: false
-        audience: api://AzureADTokenExchange
+        audience: "api://AzureADTokenExchange"
 
     # Build the .NET application (only if needed)
     - name: Build the application
@@ -45,17 +47,14 @@ jobs:
       run: |
         dotnet publish --configuration Release --output ./publish
 
-    # Deploy to Azure Function App (This part uses Azure CLI directly)
+    # Step to deploy to Azure Functions (replace with your correct app info)
     - name: Deploy to Azure Function App
       run: |
-        # Set the Azure subscription (if needed)
         az account set --subscription ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-
-        # Deploy the app to Azure Functions (Replace with your function app name and resource group)
         az functionapp deployment source config-zip \
-          --resource-group ${{ secrets.AZURE_RESOURCE_GROUP }} \
-          --name ${{ secrets.AZURE_FUNCTION_APP_NAME }} \
-          --src ./publish.zip
+        --resource-group ${{ secrets.AZURE_RESOURCE_GROUP }} \
+        --name ${{ secrets.AZURE_FUNCTION_APP_NAME }} \
+        --src ./publish.zip
 
     # Clean up if necessary
     - name: Cleanup
