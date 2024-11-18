@@ -5,6 +5,7 @@ using TLP_API.Models;
 using TLP_API.Services;
 using Xunit;
 using Microsoft.Azure.Cosmos;
+using TLP_API.Configuration;
 
 namespace TLP_API.Tests
 {
@@ -16,16 +17,17 @@ namespace TLP_API.Tests
 
         public CosmosDbServiceTests()
         {
-            // Mock CosmosClient and Container
-            _mockCosmosClient = new Mock<CosmosClient>();
-            _mockContainer = new Mock<Container>();
+            // Setup a fake configuration for CosmosDbConfig
+            var config = new CosmosDbConfig
+            {
+                AccountEndpoint = "fake-endpoint",
+                AccountKey = "fake-key",
+                DatabaseName = "fake-db",
+                ContainerName = "fake-container"
+            };
 
-            // Setup GetContainer to return the mock container
-            _mockCosmosClient.Setup(client => client.GetContainer(It.IsAny<string>(), It.IsAny<string>()))
-                .Returns(_mockContainer.Object);
-
-            // Initialize CosmosDbService with mock data
-            _cosmosDbService = new CosmosDbService("fake-endpoint", "fake-key", "fake-db", "fake-container");
+            // Pass the config to CosmosDbService constructor
+            _cosmosDbService = new CosmosDbService(config);
         }
 
         [Fact]

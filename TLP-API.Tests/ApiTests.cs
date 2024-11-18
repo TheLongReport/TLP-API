@@ -1,23 +1,24 @@
-using Microsoft.AspNetCore.Mvc.Testing;
+using Microsoft.Extensions.Hosting;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
-using TLP_API;  // Correct namespace
+using TLP_API;
+using TLP_API.Models;
 using Newtonsoft.Json;
 using Xunit;
-using TLP_API.Models;  // Ensure this is included to reference MyItem
+using System.Net;
 
 namespace TLP_API.Tests
 {
-    public class ApiTests : IClassFixture<WebApplicationFactory<TLP_API.Program>>
+    public class ApiTests
     {
-        private readonly WebApplicationFactory<TLP_API.Program> _factory;
         private readonly HttpClient _client;
 
-        public ApiTests(WebApplicationFactory<TLP_API.Program> factory)
+        // HttpClient is setup in the constructor.
+        public ApiTests()
         {
-            _factory = factory;
-            _client = _factory.CreateClient();
+            // Create an HttpClient with the correct address for local testing
+            _client = new HttpClient { BaseAddress = new Uri("http://localhost:7071") }; // Local Azure Functions runtime
         }
 
         [Fact]
@@ -26,17 +27,17 @@ namespace TLP_API.Tests
             // Arrange
             var newItem = new MyItem
             {
-                Name = "Test Item", // Required Name
-                Email = "test@example.com" // Valid Email
+                Name = "Test Item",
+                Email = "test@example.com"
             };
 
             var content = new StringContent(JsonConvert.SerializeObject(newItem), Encoding.UTF8, "application/json");
 
             // Act
-            var response = await _client.PostAsync("/addItem", content);
+            var response = await _client.PostAsync("/api/listing", content); // Ensure route is correct
 
             // Assert
-            response.EnsureSuccessStatusCode();
+            response.EnsureSuccessStatusCode(); // Verifies that the status code is 2xx
         }
 
         [Fact]
@@ -45,16 +46,17 @@ namespace TLP_API.Tests
             // Arrange
             var invalidItem = new MyItem
             {
-                Name = "", // Invalid (empty Name)
-                Email = null // Valid, but still need Name
+                Name = "", // Invalid name
+                Email = null
             };
+
             var content = new StringContent(JsonConvert.SerializeObject(invalidItem), Encoding.UTF8, "application/json");
 
             // Act
-            var response = await _client.PostAsync("/addItem", content);
+            var response = await _client.PostAsync("/api/listing", content); // Ensure route is correct
 
             // Assert
-            Assert.Equal(System.Net.HttpStatusCode.BadRequest, response.StatusCode);
+            Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode); // Verifies that the status code is 400
         }
     }
 }
