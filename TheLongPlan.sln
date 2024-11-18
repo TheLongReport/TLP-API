@@ -7,6 +7,19 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TLP-API", "TLP-API\TLP-API.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TLP-API.Tests", "TLP-API.Tests\TLP-API.Tests.csproj", "{83B66591-E738-4387-8D2B-356BC6836F23}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "GIT_STUFF", "GIT_STUFF", "{110F8D32-7EBA-4E84-A12B-66C8F7B5856E}"
+	ProjectSection(SolutionItems) = preProject
+		.gitignore = .gitignore
+		README.md = README.md
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Github_Workflows", "Github_Workflows", "{E5035159-ACB3-4B19-948C-50DC520ADAB3}"
+	ProjectSection(SolutionItems) = preProject
+		.github\workflows\azure-deploy.yml = .github\workflows\azure-deploy.yml
+		.github\workflows\dev_tlp-endpoints.yml = .github\workflows\dev_tlp-endpoints.yml
+		.github\workflows\dotnet.yml = .github\workflows\dotnet.yml
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -24,5 +37,8 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{E5035159-ACB3-4B19-948C-50DC520ADAB3} = {110F8D32-7EBA-4E84-A12B-66C8F7B5856E}
 	EndGlobalSection
 EndGlobal
