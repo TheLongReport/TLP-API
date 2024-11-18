@@ -1,7 +1,5 @@
 name: Deploy to Azure Function
 
-name: Azure Function Deployment
-
 on:
   push:
     branches:
