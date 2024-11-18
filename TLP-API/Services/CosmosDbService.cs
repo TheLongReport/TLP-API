@@ -19,7 +19,9 @@ namespace TLP_API.Services
         public async Task AddItemAsync<T>(T item)
         {
             if (item == null)
+            {
                 throw new ArgumentNullException(nameof(item), "Item cannot be null.");
+            }
 
             var partitionKey = new PartitionKey(item.GetType().GetProperty("id")?.GetValue(item)?.ToString());
             await _container.CreateItemAsync(item, partitionKey);
