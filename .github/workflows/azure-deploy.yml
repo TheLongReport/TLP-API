@@ -9,6 +9,8 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
      
+    permissions:
+     id-token: write  
 
     steps:
       # Step 1: Checkout code from the repository
