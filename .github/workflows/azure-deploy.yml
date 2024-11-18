@@ -25,7 +25,6 @@ jobs:
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
           client-id: ${{ secrets.AZURE_CLIENT_ID }}
           client-secret: ${{ secrets.AZURE_CLIENT_SECRET }}
-          auth-type: "IDENTITY"
 
       # Step 3: Deploy to Azure Function App using a ZIP file
       - name: Deploy to Azure Function App
