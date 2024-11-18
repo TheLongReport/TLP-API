@@ -17,7 +17,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v2
 
-      # Step 2: Log in to Azure using Service Principal
+      # Step 2: Log in to Azure using Service Principal.
       - name: Log in to Azure
         uses: azure/login@v1
         with:
