@@ -3,7 +3,7 @@ name: Deploy to Azure Function
 on:
   push:
     branches:
-      - dev  # Adjust to your deployment branch
+      - dev  
 
 jobs:
   deploy:
