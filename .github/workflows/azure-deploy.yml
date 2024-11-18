@@ -23,7 +23,7 @@ jobs:
         with:
           tenant-id: ${{ secrets.AZURE_TENANT_ID }}
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-          auth-type: "OIDC"
+          auth-type: "IDENTITY"
 
       # Step 3: Deploy to Azure Function App using a ZIP file
       - name: Deploy to Azure Function App
