@@ -16,7 +16,7 @@ jobs:
       - name: Set up .NET SDK
         uses: actions/setup-dotnet@v2
         with:
-          dotnet-version: '7.0'  # Use the .NET version that matches your project
+          dotnet-version: '9.0.x' # Specify the .NET version you are using
 
       - name: Publish the .NET app
         run: |
