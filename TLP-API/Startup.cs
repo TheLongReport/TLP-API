@@ -1,21 +1,25 @@
-using Microsoft.Azure.Functions.Extensions.DependencyInjection;
+using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.DependencyInjection;
-using TLP_API.Configuration;
-using TLP_API.Services;
+using Microsoft.Extensions.Hosting;
+using TLP_API.Services;                         // services like ICosmosDbService
+using TLP_API.Configuration;                    // config classes like CosmosDbConfig
 
-[assembly: FunctionsStartup(typeof(TLP_API.Startup))]
-
-namespace TLP_API
+public class Program
 {
-    public class Startup : FunctionsStartup
+    public static void Main(string[] args)
     {
-        public override void Configure(IFunctionsHostBuilder builder)
-        {
-            // Register CosmosDbConfig as a Singleton to use across functions
-            builder.Services.AddSingleton<CosmosDbConfig>(new CosmosDbConfig());
+        var host = new HostBuilder()
+            .ConfigureFunctionsWebApplication()
+            .ConfigureServices(services =>
+            {
+                // Register your services here
+                services.AddSingleton<CosmosDbConfig>(new CosmosDbConfig());
+                services.AddSingleton<ICosmosDbService, CosmosDbService>();
 
-            // Register CosmosDbService using CosmosDbConfig
-            builder.Services.AddSingleton<ICosmosDbService, CosmosDbService>();
-        }
+                // Optionally add more services
+            })
+            .Build();
+
+        host.Run();
     }
 }

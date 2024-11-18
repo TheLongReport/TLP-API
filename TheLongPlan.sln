@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.12.35506.116
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TLP-API", "TLP-API\TLP-API.csproj", "{256C0B22-7425-4236-A3C3-EEE19BC4D6C6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TLP-API", "TLP-API\TLP-API.csproj", "{256C0B22-7425-4236-A3C3-EEE19BC4D6C6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TLP-API.Tests", "TLP-API.Tests\TLP-API.Tests.csproj", "{83B66591-E738-4387-8D2B-356BC6836F23}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TLP-API.Tests", "TLP-API.Tests\TLP-API.Tests.csproj", "{83B66591-E738-4387-8D2B-356BC6836F23}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "GIT_STUFF", "GIT_STUFF", "{110F8D32-7EBA-4E84-A12B-66C8F7B5856E}"
 	ProjectSection(SolutionItems) = preProject
@@ -15,7 +15,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "GIT_STUFF", "GIT_STUFF", "{
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Github_Workflows", "Github_Workflows", "{E5035159-ACB3-4B19-948C-50DC520ADAB3}"
 	ProjectSection(SolutionItems) = preProject
-		.github\workflows\azure-deploy.yml = .github\workflows\azure-deploy.yml
 		.github\workflows\dev_tlp-endpoints.yml = .github\workflows\dev_tlp-endpoints.yml
 		.github\workflows\dotnet.yml = .github\workflows\dotnet.yml
 	EndProjectSection
@@ -40,5 +39,8 @@ Global
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{E5035159-ACB3-4B19-948C-50DC520ADAB3} = {110F8D32-7EBA-4E84-A12B-66C8F7B5856E}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {9EE493BE-716E-4193-97E6-40E4FF631A4D}
 	EndGlobalSection
 EndGlobal

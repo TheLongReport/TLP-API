@@ -4,8 +4,6 @@ using Microsoft.Extensions.Logging;                         // For logging withi
 using TLP_API.Models;                                       // For MyItem model
 using TLP_API.Services;                                     // For ICosmosDbService
 using System.Threading.Tasks;                               // For async/await
-using Microsoft.Azure.WebJobs;                              // For Azure Function attributes (FunctionName)
-using Microsoft.Azure.WebJobs.Extensions.Http;              // For HttpTrigger bindings and extensions
 using Microsoft.AspNetCore.Mvc;                             // For action results like OkObjectResult, BadRequestObjectResult
 using Newtonsoft.Json;                                      // For JSON serialization
 
@@ -20,7 +18,7 @@ namespace TLP_API.Functions
             _cosmosDbService = cosmosDbService;
         }
 
-        [FunctionName("AddItem")]
+        [Function("AddItem")]
         public async Task<HttpResponseData> AddItem(
             [HttpTrigger(AuthorizationLevel.Function, "post", Route = "listing")] HttpRequestData req,
             FunctionContext context)
