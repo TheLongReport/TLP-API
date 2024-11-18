@@ -26,7 +26,7 @@ jobs:
           client-id: ${{ secrets.AZURE_CLIENT_ID }}
           client-secret: ${{ secrets.AZURE_CLIENT_SECRET }}
 
-      # Step 3: Deploy to Azure Function App using a ZIP file
+      # Step 3: Deploy to Azure Function App using a ZIP file.
       - name: Deploy to Azure Function App
         run: |
           az functionapp deployment source config-zip \
