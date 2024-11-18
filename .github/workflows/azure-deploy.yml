@@ -1,21 +1,33 @@
 name: Deploy to Azure Function
 
+name: Azure Function Deployment
+
 on:
   push:
     branches:
-      - dev  
+      - dev  # Trigger on push to dev branch
 
 jobs:
-  deploy:
+  build-and-deploy:
     runs-on: ubuntu-latest
-     
-    permissions:
-     id-token: write  
 
     steps:
-      # Step 1: Checkout code from the repository.
-      - name: Checkout repository
+      - name: Checkout code
         uses: actions/checkout@v2
+
+      - name: Set up .NET SDK
+        uses: actions/setup-dotnet@v2
+        with:
+          dotnet-version: '7.0'  # Use the .NET version that matches your project
+
+      - name: Publish the .NET app
+        run: |
+          dotnet publish -c Release -o ./publish
+
+      - name: Zip the published app
+        run: |
+          cd ./publish
+          zip -r ../publish.zip .  # Create a ZIP file for deployment
 
       # Step 2: Log in to Azure using Service Principal.
       - name: Log in to Azure
@@ -26,15 +38,13 @@ jobs:
           client-id: ${{ secrets.AZURE_CLIENT_ID }}
           client-secret: ${{ secrets.AZURE_CLIENT_SECRET }}
 
-      # Step 3: Deploy to Azure Function App using a ZIP file.
-      - name: Deploy to Azure Function App
+      - name: Deploy to Azure Function
         run: |
           az functionapp deployment source config-zip \
             --resource-group ${{ secrets.AZURE_RESOURCE_GROUP }} \
             --name ${{ secrets.AZURE_FUNCTION_APP_NAME }} \
             --src ./publish.zip  # Path to the ZIP file of your app
 
-      # Optional: Clear Azure login credentials (for security purposes)
       - name: Logout from Azure
         run: |
           az logout
