@@ -9,8 +9,6 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
      
-    permissions:
-     id-token: write  
 
     steps:
       # Step 1: Checkout code from the repository
@@ -25,6 +23,7 @@ jobs:
           tenant-id: ${{ secrets.AZURE_TENANT_ID }}
           client-secret: ${{ secrets.AZURE_CLIENT_SECRET }}
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+          auth-type: "SERVICE_PRINCIPAL"
 
       # Step 3: Deploy to Azure Function App using a ZIP file
       - name: Deploy to Azure Function App
