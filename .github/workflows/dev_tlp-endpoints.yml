@@ -10,25 +10,34 @@ on:
   workflow_dispatch:
 
 env:
-  AZURE_FUNCTIONAPP_PACKAGE_PATH: '.' # set this to the path to your web app project, defaults to the repository root
-  DOTNET_VERSION: '8.0' # set this to the dotnet version to use
+  AZURE_FUNCTIONAPP_PACKAGE_PATH: '.' # path to your web app project, defaults to the repository root
+  DOTNET_VERSION: '8.0' # dotnet version to use
 
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
     permissions:
-      id-token: write #This is required for requesting the JWT
+      id-token: write # Required for requesting the JWT
 
     steps:
-      - name: 'Checkout GitHub Action'
+      # Step 1: Check out the source code
+      - name: Checkout Source Code
         uses: actions/checkout@v4
 
+      # Step 2: Set up the .NET environment
       - name: Setup DotNet ${{ env.DOTNET_VERSION }} Environment
         uses: actions/setup-dotnet@v1
         with:
           dotnet-version: ${{ env.DOTNET_VERSION }}
 
-      - name: 'Resolve Project Dependencies Using Dotnet'
+      # Step 3: Clean existing build output (optional but recommended)
+      - name: Clean Existing Build Output
+        run: |
+          if [ -d "./output" ]; then
+            rm -rf ./output
+          fi
+
+      - name: 'Build the Project'
         shell: bash
         run: |
           pushd './${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}'
@@ -41,6 +50,14 @@ jobs:
           client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_FF37A09F042846CBAE1FBDAD842B0759 }}
           tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_5E8B54C3C47F4571BC7AABD963B03AC6 }}
           subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_026938D3E50E4B32A5DBAF15ACD06CCD }}
+      
+      # Step 6: Validate the deployment package
+      - name: Validate Deployment Package
+        run: |
+          if [ ! -d "./output" ]; then
+            echo "Deployment package not found. Ensure the build step was successful."
+            exit 1
+          fi
 
       - name: 'Run Azure Functions Action'
         uses: Azure/functions-action@v1
@@ -49,4 +66,9 @@ jobs:
           app-name: 'tlp-endpoints'
           slot-name: 'Production'
           package: '${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}/output'
-          
+
+      # Step 8: Verify Deployment Status
+      - name: Verify Deployment
+        run: |
+          echo "Deployment complete. Verifying deployment status..."
+          az functionapp show --name 'tlp-endpoints' --resource-group 'QNZ_TheLongReport' --query state
