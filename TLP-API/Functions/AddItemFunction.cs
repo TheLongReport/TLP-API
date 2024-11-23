@@ -18,12 +18,12 @@ namespace TLP_API.Functions
             _cosmosDbService = cosmosDbService;
         }
 
-        [Function("AddItem1")]
+        [Function("AddItem12131")]
         public async Task<HttpResponseData> AddItem(
             [HttpTrigger(AuthorizationLevel.Function, "post", Route = "listing")] HttpRequestData req,
             FunctionContext context)
         {
-            var logger = context.GetLogger("AddItem1");
+            var logger = context.GetLogger("AddItem12131");
 
             // Deserialize the request body into MyItem
             var myItem = await req.ReadFromJsonAsync<MyItem>();
