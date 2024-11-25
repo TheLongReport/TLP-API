@@ -1,26 +1,31 @@
+using System;
+
 namespace TLP_API.Configuration
 {
     public class CosmosDbConfig
     {
-        public string AccountEndpoint { get; set; }
-        public string AccountKey { get; set; }
-        public string DatabaseName { get; set; }
-        public string ContainerName { get; set; }
+        public string AccountEndpoint { get; private set; }
+        public string AccountKey { get; private set; }
+        public string DatabaseName { get; private set; }
+        public string ContainerName { get; private set; }
 
         public CosmosDbConfig()
         {
-            // Fetch settings from environment variables
-            AccountEndpoint = System.Environment.GetEnvironmentVariable("COSMOS_DB_ENDPOINT")!;
-            AccountKey = System.Environment.GetEnvironmentVariable("COSMOS_DB_KEY")!;
-            DatabaseName = System.Environment.GetEnvironmentVariable("COSMOS_DB_NAME")!;
-            ContainerName = System.Environment.GetEnvironmentVariable("COSMOS_DB_CONTAINER")!;
+            // Fetch and validate settings from environment variables
+            AccountEndpoint = GetRequiredEnvVariable("COSMOS_DB_ENDPOINT");
+            AccountKey = GetRequiredEnvVariable("COSMOS_DB_KEY");
+            DatabaseName = GetRequiredEnvVariable("COSMOS_DB_NAME");
+            ContainerName = GetRequiredEnvVariable("COSMOS_DB_CONTAINER");
+        }
 
-            // Optionally validate the settings
-            if (string.IsNullOrEmpty(AccountEndpoint) || string.IsNullOrEmpty(AccountKey) ||
-                string.IsNullOrEmpty(DatabaseName) || string.IsNullOrEmpty(ContainerName))
+        private static string GetRequiredEnvVariable(string variableName)
+        {
+            var value = Environment.GetEnvironmentVariable(variableName);
+            if (string.IsNullOrEmpty(value))
             {
-                throw new InvalidOperationException("Cosmos DB configuration is incomplete.");
+                throw new InvalidOperationException($"Environment variable '{variableName}' is not set.");
             }
+            return value;
         }
     }
 }
