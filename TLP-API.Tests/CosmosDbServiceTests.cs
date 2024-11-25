@@ -15,19 +15,23 @@ namespace TLP_API.Tests
         private readonly Mock<Container> _mockContainer;
         private readonly ICosmosDbService _cosmosDbService;
 
-        public CosmosDbServiceTests()
+        [Fact]
+        public void CosmosDbConfig_ShouldLoadFromEnvironmentVariables()
         {
-            // Setup a fake configuration for CosmosDbConfig
-            var config = new CosmosDbConfig
-            {
-                AccountEndpoint = "fake-endpoint",
-                AccountKey = "fake-key",
-                DatabaseName = "fake-db",
-                ContainerName = "fake-container"
-            };
+            // Arrange
+            Environment.SetEnvironmentVariable("COSMOS_DB_ENDPOINT", "fake-endpoint");
+            Environment.SetEnvironmentVariable("COSMOS_DB_KEY", "fake-key");
+            Environment.SetEnvironmentVariable("COSMOS_DB_NAME", "fake-db");
+            Environment.SetEnvironmentVariable("COSMOS_DB_CONTAINER", "fake-container");
 
-            // Pass the config to CosmosDbService constructor
-            _cosmosDbService = new CosmosDbService(config);
+            // Act
+            var config = new CosmosDbConfig();
+
+            // Assert
+            Assert.Equal("fake-endpoint", config.AccountEndpoint);
+            Assert.Equal("fake-key", config.AccountKey);
+            Assert.Equal("fake-db", config.DatabaseName);
+            Assert.Equal("fake-container", config.ContainerName);
         }
 
         [Fact]
