@@ -41,5 +41,9 @@ namespace TLP_API.Services
         /// <param name="cancellationToken">A token to cancel the operation if needed.</param>
         /// <returns>A list of all items of the specified type.</returns>
         Task<IEnumerable<T>> GetAllItemsAsync<T>(CancellationToken cancellationToken = default);
+
+
+        Task<bool> TestConnectionAsync();
+
     }
 }

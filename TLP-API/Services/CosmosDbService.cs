@@ -21,18 +21,26 @@ namespace TLP_API.Services
 
         public async Task AddItemAsync<T>(T item, CancellationToken cancellationToken = default)
         {
+
             if (item == null)
             {
                 throw new ArgumentNullException(nameof(item), "Item cannot be null.");
             }
 
-            var partitionKeyValue = GetPartitionKeyValue(item);
-            if (string.IsNullOrEmpty(partitionKeyValue))
+            try
             {
-                throw new InvalidOperationException("Partition key value cannot be null or empty.");
-            }
+                var partitionKeyValue = GetPartitionKeyValue(item);
 
-            await _container.CreateItemAsync(item, new PartitionKey(partitionKeyValue), cancellationToken: cancellationToken);
+                var partitionKey = new PartitionKey(partitionKeyValue);
+                Console.WriteLine($"Adding item with partition key: {partitionKey}");
+                await _container.CreateItemAsync(item, partitionKey, cancellationToken: cancellationToken);
+                Console.WriteLine("Item successfully added to Cosmos DB.");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error adding item to Cosmos DB: {ex.Message}");
+                throw;
+            }
         }
 
         public async Task<T> GetItemAsync<T>(string id, string partitionKey, CancellationToken cancellationToken = default)
@@ -91,6 +99,20 @@ namespace TLP_API.Services
         {
             var property = typeof(T).GetProperty("id", System.Reflection.BindingFlags.IgnoreCase | System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance);
             return property?.GetValue(item)?.ToString();
+        }
+        public async Task<bool> TestConnectionAsync()
+        {
+            try
+            {
+                var database = _cosmosClient.GetDatabase("TheLongPlanCore"); // Replace with your actual database name
+                var container = database.GetContainer("Users"); // Replace with your actual container name
+                var response = await database.ReadAsync();
+                return response.StatusCode == System.Net.HttpStatusCode.OK;
+            }
+            catch
+            {
+                return false;
+            }
         }
     }
 }

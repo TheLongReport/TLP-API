@@ -21,52 +21,42 @@ namespace TLP_API.Functions
         [Function("AddItem")]
         public async Task<HttpResponseData> AddItem(
             [HttpTrigger(AuthorizationLevel.Function, "post", Route = "listing")] HttpRequestData req,
-            FunctionContext context,
-            CancellationToken cancellationToken)
+            FunctionContext context)
         {
             var logger = context.GetLogger("AddItem");
+            logger.LogInformation("Start processing AddItem function.");
 
-            logger.LogInformation("Received a request to add an item.");
+            // Deserialize the request body into MyItem
+            logger.LogInformation("Attempting to deserialize request body.");
+            var myItem = await req.ReadFromJsonAsync<MyItem>();
+
+            if (myItem == null)
+            {
+                logger.LogWarning("Invalid data received.");
+                var badResponse = req.CreateResponse(System.Net.HttpStatusCode.BadRequest);
+                await badResponse.WriteStringAsync("Invalid data.");
+                return badResponse;
+            }
 
             try
             {
-                // Step 1: Deserialize the request body into MyItem
-                logger.LogInformation("Deserializing request body.");
-                var myItem = await req.ReadFromJsonAsync<MyItem>(cancellationToken);
-
-                if (myItem == null)
-                {
-                    logger.LogWarning("Request body is null or invalid.");
-                    var badResponse = req.CreateResponse(System.Net.HttpStatusCode.BadRequest);
-                    await badResponse.WriteStringAsync("Invalid data.", cancellationToken);
-                    return badResponse;
-                }
-
-                // Step 2: Add item to Cosmos DB
-                logger.LogInformation("Adding item to Cosmos DB.");
-                await _cosmosDbService.AddItemAsync(myItem, cancellationToken);
+                logger.LogInformation("Attempting to add item to Cosmos DB.");
+                // Add item to Cosmos DB
+                await _cosmosDbService.AddItemAsync(myItem);
                 logger.LogInformation("Item added successfully.");
-
-                // Step 3: Return a successful response
-                var response = req.CreateResponse(System.Net.HttpStatusCode.OK);
-                await response.WriteStringAsync("Item added successfully.", cancellationToken);
-                logger.LogInformation("Response sent successfully.");
-                return response;
-            }
-            catch (TaskCanceledException)
-            {
-                logger.LogError("The request was canceled, likely due to a timeout.");
-                var timeoutResponse = req.CreateResponse(System.Net.HttpStatusCode.RequestTimeout);
-                await timeoutResponse.WriteStringAsync("Request timed out.", cancellationToken);
-                return timeoutResponse;
             }
             catch (Exception ex)
             {
-                logger.LogError($"An unexpected error occurred: {ex.Message}");
+                logger.LogError($"Error adding item to Cosmos DB: {ex.Message}");
                 var errorResponse = req.CreateResponse(System.Net.HttpStatusCode.InternalServerError);
-                await errorResponse.WriteStringAsync("An internal server error occurred.", cancellationToken);
+                await errorResponse.WriteStringAsync("Failed to add item.");
                 return errorResponse;
             }
+
+            // Return successful response
+            var response = req.CreateResponse(System.Net.HttpStatusCode.OK);
+            await response.WriteStringAsync("Item added successfully.");
+            return response;
         }
     }
 }
